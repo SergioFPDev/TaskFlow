@@ -1,7 +1,8 @@
 # TaskFlow
 
 TaskFlow is a Kanban-style task manager built with React 18, TypeScript, Zustand, Styled Components, React Router, Vitest and React Testing Library. It focuses on a realistic day-to-day workflow: task planning, drag and drop, assignees, comments, activity tracking and local persistence.
-
+<img width="1392" height="947" alt="Screenshot_121" src="https://github.com/user-attachments/assets/72fa02df-7709-4494-8910-66a45090110f" />
+<img width="586" height="734" alt="Screenshot_123" src="https://github.com/user-attachments/assets/27e85b77-cfa2-4d79-9c10-c0f8bb7d0efd" />
 ## What the app does
 
 - Create, edit and delete tasks.
