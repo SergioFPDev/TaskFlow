@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from 'react'
+﻿import { FormEvent, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Button } from '../../../components/Button'
 import { teamMembers } from '../mockData'
@@ -51,27 +51,89 @@ const Select = styled.select`
   padding: 0.85rem 1rem;
 `
 
+const MemberSection = styled.div`
+  display: grid;
+  gap: 0.75rem;
+`
+
+const MemberHint = styled.p`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.textMuted};
+  font-size: 0.88rem;
+`
+
 const MemberGrid = styled.div`
   display: grid;
   gap: 0.75rem;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 `
 
-const MemberOption = styled.label`
-  display: flex;
+const MemberOption = styled.label<{ $selected: boolean; $color: string }>`
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.85rem 1rem;
+  gap: 0.85rem;
+  padding: 0.95rem 1rem;
   border-radius: ${({ theme }) => theme.radii.md};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme, $selected, $color }) => ($selected ? $color : theme.colors.border)};
+  background: ${({ theme, $selected, $color }) =>
+    $selected ? `${$color}14` : theme.colors.surface};
+  box-shadow: ${({ theme, $selected }) => ($selected ? theme.shadows.soft : 'none')};
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
 `
 
-const MemberSwatch = styled.span<{ $color: string }>`
-  width: 0.9rem;
-  height: 0.9rem;
+const HiddenCheckbox = styled.input`
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+`
+
+const Avatar = styled.span<{ $color: string }>`
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
   background: ${({ $color }) => $color};
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 800;
+`
+
+const MemberInfo = styled.span`
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+`
+
+const MemberName = styled.span`
+  color: ${({ theme }) => theme.colors.text};
+  font-weight: 700;
+  line-height: 1.2;
+`
+
+const MemberRole = styled.span`
+  color: ${({ theme }) => theme.colors.textMuted};
+  font-size: 0.84rem;
+  line-height: 1.3;
+`
+
+const CheckBadge = styled.span<{ $selected: boolean; $color: string }>`
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid ${({ theme, $selected, $color }) => ($selected ? $color : theme.colors.border)};
+  background: ${({ $selected, $color }) => ($selected ? $color : 'transparent')};
+  color: ${({ $selected }) => ($selected ? '#ffffff' : 'transparent')};
+  font-size: 0.82rem;
+  font-weight: 800;
 `
 
 const Actions = styled.div`
@@ -192,24 +254,40 @@ export function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
         </Field>
       </Grid>
 
-      <Field>
+      <Field as="div">
         <span>Team members</span>
-        <MemberGrid>
-          {teamMembers.map((member) => (
-            <MemberOption key={member.id}>
-              <input
-                type="checkbox"
-                aria-label={`Assign ${member.name}`}
-                checked={assigneeIds.includes(member.id)}
-                onChange={() => toggleMember(member.id)}
-              />
-              <MemberSwatch $color={member.color} />
-              <span>
-                {member.name} · {member.role}
-              </span>
-            </MemberOption>
-          ))}
-        </MemberGrid>
+        <MemberSection>
+          <MemberHint>Assign the people responsible for planning, delivery or review.</MemberHint>
+          <MemberGrid>
+            {teamMembers.map((member) => {
+              const selected = assigneeIds.includes(member.id)
+              const initials = member.name
+                .split(' ')
+                .map((part) => part[0])
+                .join('')
+                .slice(0, 2)
+
+              return (
+                <MemberOption key={member.id} $selected={selected} $color={member.color}>
+                  <HiddenCheckbox
+                    type="checkbox"
+                    aria-label={`Assign ${member.name}`}
+                    checked={selected}
+                    onChange={() => toggleMember(member.id)}
+                  />
+                  <Avatar $color={member.color}>{initials}</Avatar>
+                  <MemberInfo>
+                    <MemberName>{member.name}</MemberName>
+                    <MemberRole>{member.role}</MemberRole>
+                  </MemberInfo>
+                  <CheckBadge $selected={selected} $color={member.color}>
+                    ✓
+                  </CheckBadge>
+                </MemberOption>
+              )
+            })}
+          </MemberGrid>
+        </MemberSection>
       </Field>
 
       <Actions>
