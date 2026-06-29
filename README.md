@@ -79,10 +79,3 @@ The board state is managed with Zustand and persisted to `localStorage`. Task re
 
 - `JSON`: full board payload including tasks and team members.
 - `CSV`: flat export with task metadata, assignees and counts for comments and activity.
-
-## Possible next steps
-
-- Sorting by due date, priority or assignee.
-- Import from JSON or CSV.
-- Mock API or backend sync.
-- Notifications, watchers or richer team permissions.
